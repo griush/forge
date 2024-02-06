@@ -16,4 +16,9 @@ pub fn build(b: *std.build.Builder) !void {
     exe.addModule("forge", forge_core.module("forge"));
 
     b.installArtifact(exe);
+
+    const run_exe = b.addRunArtifact(exe);
+
+    const run_step = b.step("run", "Run the application");
+    run_step.dependOn(&run_exe.step);
 }
