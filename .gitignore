@@ -1,2 +1,6 @@
+# Forge
+forge.log
+
+# Zig
 zig-out/
 zig-cache/
