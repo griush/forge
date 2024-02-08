@@ -1,5 +1,6 @@
 const app = @import("application.zig");
 const logger = @import("logger.zig");
+const events = @import("events.zig");
 const time = @import("std").time;
 
 const RuntimeError = error {
@@ -20,10 +21,17 @@ var g_engine = Engine {
 
 pub fn init(client_app: app.Application) void {
     g_engine.app_handle = client_app;
+
+    events.init();
+
     g_engine.initialized = true;
 
     logger.info("Initialized engine.", .{});
     logger.info("Loaded application: '{s}'", .{client_app.name});
+}
+
+pub fn shutdown() void {
+    events.shutdown();
 }
 
 pub fn run() RuntimeError!void {
@@ -38,6 +46,10 @@ pub fn run() RuntimeError!void {
     // This would only fail on wierd computers, any personal or "normal" computer will work.
     // Form std docs
     var dt_timer = time.Timer.start() catch unreachable;
+
+    _ = events.fireEvent(events.EventType.KeyPress, .{
+        .key_code = 69,
+    });
 
     while (g_engine.is_running) {
         // TODO: Looks like it's working but test more
