@@ -32,16 +32,26 @@ const ClientRegistrations = struct {
 };
 
 var g_client_registrations: std.ArrayList(ClientRegistrations) = undefined;
+var g_events_initialized: bool = false;
 
+/// Must call shutdown to free allocated memory.
 pub fn init() void {
     g_client_registrations = std.ArrayList(ClientRegistrations).init(std.heap.c_allocator);
+    g_events_initialized = true;
 }
 
 pub fn shutdown() void {
     g_client_registrations.deinit();
+    g_events_initialized = false;
 }
 
+/// The order of callback registration matters.
+/// If a callback returns true (the event has been handled) it will break the loop and all the remaining callbacks will be ingnored.
 pub fn registerEvent(event_type: EventType, callback: EventCallbackFn) void {
+    if (!g_events_initialized) {
+        logger.err("Event registered before event system initialisation", .{});
+    }
+
     g_client_registrations.append(.{
         .type = event_type,
         .callback = callback,
@@ -51,6 +61,10 @@ pub fn registerEvent(event_type: EventType, callback: EventCallbackFn) void {
 }
 
 pub fn fireEvent(event_type: EventType, payload: EventPayload) bool {
+    if (!g_events_initialized) {
+        logger.err("Event fired before event system initialisation", .{});
+    }
+
     for (g_client_registrations.items) |reg| {
         if (reg.type != event_type) {
             continue;
