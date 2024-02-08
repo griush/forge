@@ -21,12 +21,12 @@ var g_logger = Logger {
 };
 
 /// Must be called before using any log function.
-/// No error handling has been done for now.
-pub fn init(spec: LoggerSpecification) fs.File.OpenError!void {
+/// Little has been done for now.
+pub fn init(spec: LoggerSpecification) !void {
     g_logger.spec = spec;
 
     g_logger.file = try fs.cwd().createFile("forge.log", .{},);
-    g_logger.file.writeAll("") catch unreachable;
+    try g_logger.file.writeAll("");
 
     g_logger.initialized = true;
 }

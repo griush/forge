@@ -4,7 +4,7 @@ pub fn build(b: *std.build.Builder) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const forge_core = b.dependency("forge", .{});
+    const forge_dep = b.dependency("forge", .{});
 
     const exe = b.addExecutable(.{
         .name = "forge-runtime",
@@ -13,7 +13,7 @@ pub fn build(b: *std.build.Builder) !void {
         .optimize = optimize,
     });
 
-    exe.addModule("forge", forge_core.module("forge"));
+    exe.addModule("forge", forge_dep.module("forge"));
     exe.linkLibC();
 
     b.installArtifact(exe);
