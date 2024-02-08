@@ -47,10 +47,6 @@ pub fn run() RuntimeError!void {
     // Form std docs
     var dt_timer = time.Timer.start() catch unreachable;
 
-    _ = events.fireEvent(events.EventType.KeyPress, .{
-        .key_code = 69,
-    });
-
     while (g_engine.is_running) {
         // TODO: Looks like it's working but test more
         const delta_time: f64 = @as(f64, @floatFromInt(dt_timer.read())) / @as(f64, @floatFromInt(time.ns_per_s));
