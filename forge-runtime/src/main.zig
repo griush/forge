@@ -20,6 +20,7 @@ pub fn main() anyerror!void {
 
     // _ = app;
     forge.engine.init(app);
+    defer forge.engine.shutdown();
 
     forge.engine.run() catch |err| {
         forge.logger.err("forge.engine runtime error: {s}", .{ @errorName(err) });

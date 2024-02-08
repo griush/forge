@@ -14,6 +14,7 @@ pub fn build(b: *std.build.Builder) !void {
     });
 
     exe.addModule("forge", forge_core.module("forge"));
+    exe.linkLibC();
 
     b.installArtifact(exe);
 
