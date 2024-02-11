@@ -64,6 +64,10 @@ pub const Window = struct {
     }
 
     pub fn update(self: Window) void {
+        // TODO: Temp GL Code
+        c.glClear(c.GL_COLOR_BUFFER_BIT);
+        c.glClearColor(1.0, 0.0, 1.0, 1.0);
+
         c.glfwSwapBuffers(self.handle);
         c.glfwPollEvents();
     }
