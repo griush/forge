@@ -1,4 +1,6 @@
 const logger = @import("logger.zig");
+const input = @import("input.zig");
+
 const std = @import("std");
 
 pub const EventType = enum(u32) {
@@ -18,10 +20,10 @@ pub const EventType = enum(u32) {
 };
 
 pub const EventPayload = union {
-    size: [2]u32,
-    key_code: i32,
-    delta: [2]f32,
-    mouse_code: i32,
+    size: [2]i32,
+    key_code: input.KeyCode,
+    delta: [2]f64,
+    mouse_code: input.MouseCode,
 };
 
 pub const EventCallbackFn = *const fn(EventType, EventPayload) bool;
