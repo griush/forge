@@ -9,7 +9,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    const forge_mod = b.addModule("forge", .{ 
+    const forge_mod = b.addModule("forge", .{
         .root_source_file = .{ .path = "src/forge.zig" },
         .target = target,
         .optimize = optimize,
@@ -26,5 +26,10 @@ pub fn build(b: *std.Build) void {
         forge_mod.linkSystemLibrary("opengl32", .{
             .preferred_link_mode = .Static,
         });
+    } else if (target.result.os.tag == .macos) {
+        // Nothing for now, macos not supported
+    } else {
+        // If not windows and not macos must be linux
+        forge_mod.linkSystemLibrary("gl", .{});
     }
 }
