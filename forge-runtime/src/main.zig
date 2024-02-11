@@ -12,6 +12,7 @@ pub fn main() anyerror!void {
         .working_dir = "",
         .on_init = runtime.onInit,
         .on_update = runtime.onUpdate,
+        .on_event = runtime.onEvent,
     };
 
     // _ = logger;

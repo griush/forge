@@ -19,12 +19,12 @@ pub const EventType = enum(u32) {
 
 pub const EventPayload = union {
     size: [2]u32,
-    key_code: u32,
+    key_code: i32,
     delta: [2]f32,
-    mouse_code: u32,
+    mouse_code: i32,
 };
 
-pub const EventCallbackFn = *const fn(EventPayload) bool;
+pub const EventCallbackFn = *const fn(EventType, EventPayload) bool;
 
 const ClientRegistrations = struct {
     type: EventType,
@@ -70,7 +70,7 @@ pub fn fireEvent(event_type: EventType, payload: EventPayload) bool {
             continue;
         }
 
-        if (reg.callback(payload)) {
+        if (reg.callback(event_type, payload)) {
             return true; // Event handled, can exit
         }
     }

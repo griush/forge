@@ -21,3 +21,14 @@ pub fn onUpdate(delta_time: f64) void {
     // delete or uncomment when using deltaTime
     _ = delta_time;
 }
+
+pub fn onEvent(t: forge.events.EventType, payload: forge.events.EventPayload) void {
+    if (t == forge.events.EventType.KeyPress) {
+        forge.logger.trace("Pressed {d}", .{payload.key_code});
+
+        // close when ESC pressed
+        if (payload.key_code == 256) {
+            forge.engine.close();
+        }
+    }
+}

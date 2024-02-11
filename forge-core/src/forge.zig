@@ -8,7 +8,7 @@ pub const events = @import("core/events.zig");
 // Math
 pub const math = @import("math/math.zig");
 
-const forge_version_name: []const u8 = "0.0.1-alpha";
+const forge_version_name: []const u8 = "0.0.2-alpha";
 
 /// Returns: (string) the current core version.
 pub fn getVersionName() []const u8 {
