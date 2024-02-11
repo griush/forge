@@ -2,7 +2,9 @@ const c = @import("../c.zig");
 const logger = @import("logger.zig");
 const event = @import("events.zig");
 
-// TODO: Support for more than one window
+fn errorCallback(err: c_int, description: [*c]const u8) callconv(.C) void {
+    logger.err("GLFW errror ({d}): {s}", .{err, description});
+}
 
 fn windowCloseCallback(handle: ?*c.GLFWwindow) callconv(.C) void {
     _ = handle;
@@ -10,6 +12,31 @@ fn windowCloseCallback(handle: ?*c.GLFWwindow) callconv(.C) void {
         .key_code = 0,
     };
     _ = event.fireEvent(event.EventType.WindowClose, payload);
+}
+
+fn keyCallback(
+    handle: ?*c.GLFWwindow,
+    key: c_int,
+    scancode: c_int,
+    action: c_int,
+    mods: c_int,
+) callconv(.C) void {
+    _ = handle;
+    _ = mods;
+    _ = scancode;
+
+    const payload = event.EventPayload{
+        .key_code = @as(i32, key)
+    };
+
+    var event_type: event.EventType = undefined;
+    if (action == c.GLFW_PRESS or action == c.GLFW_REPEAT) {
+        event_type = event.EventType.KeyPress;
+    }
+    else if (action == c.GLFW_RELEASE) {
+        event_type = event.EventType.KeyRelease;
+    }
+    _ = event.fireEvent(event_type, payload);
 }
 
 pub const WindowInitError = error {
@@ -30,6 +57,7 @@ pub const Window = struct {
 
     pub fn init(spec: WindowSpecification) WindowInitError!Window {
         if (g_window_count == 0) {
+            _ = c.glfwSetErrorCallback(errorCallback);
             if(c.glfwInit() == 0) {
                 return WindowInitError.GLFWInitError;
             }
@@ -49,6 +77,7 @@ pub const Window = struct {
         c.glfwMakeContextCurrent(win.handle);
 
         _ = c.glfwSetWindowCloseCallback(win.handle, windowCloseCallback);
+        _ = c.glfwSetKeyCallback(win.handle, keyCallback);
 
         logger.info("Created window: '{s}'", .{spec.title});
         return win;

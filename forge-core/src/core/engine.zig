@@ -26,7 +26,13 @@ var g_engine = Engine {
 };
 
 //* Section event callbacks
-fn onWindoCloseEvent(payload: events.EventPayload) bool {
+fn onEvent(t: events.EventType, payload: events.EventPayload) bool {
+    g_engine.app_handle.on_event(t, payload);
+    return false;
+}
+
+fn onWindoCloseEvent(t: events.EventType, payload: events.EventPayload) bool {
+    _ = t;
     _ = payload;
     g_engine.is_running = false;
     return true;
@@ -46,6 +52,7 @@ pub fn init(client_app: app.Application) !void {
 
     g_engine.main_window = try window.Window.init(win_spec);
     _ = events.registerEvent(events.EventType.WindowClose, onWindoCloseEvent);
+    _ = events.registerEvent(events.EventType.KeyPress, onEvent);
 
     g_engine.initialized = true;
 
