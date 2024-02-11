@@ -4,6 +4,11 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const glfw_dep = b.dependency("glfw", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
     const forge_mod = b.addModule("forge", .{ 
         .root_source_file = .{ .path = "src/forge.zig" },
         .target = target,
@@ -11,8 +16,8 @@ pub fn build(b: *std.Build) void {
         .link_libc = true,
     });
 
-    forge_mod.addIncludePath(.{ .path = "dependencies/GLFW/include/"});
-    forge_mod.addLibraryPath(.{ .path = "dependencies/GLFW/lib-mingw-w64/"});
+    forge_mod.linkLibrary(glfw_dep.artifact("glfw"));
+    @import("glfw").addPaths(forge_mod);
 
     if (target.result.os.tag == .windows) {
         forge_mod.linkSystemLibrary("gdi32", .{});
@@ -22,9 +27,4 @@ pub fn build(b: *std.Build) void {
             .preferred_link_mode = .Static,
         });
     }
-
-    forge_mod.linkSystemLibrary("glfw3", .{
-        .preferred_link_mode = .Static,
-    });
-
 }
