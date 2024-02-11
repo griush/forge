@@ -18,13 +18,13 @@ pub fn build(b: *std.Build) void {
         forge_mod.linkSystemLibrary("gdi32", .{});
         forge_mod.linkSystemLibrary("user32", .{});
         forge_mod.linkSystemLibrary("shell32", .{});
+        forge_mod.linkSystemLibrary("opengl32", .{
+            .preferred_link_mode = .Static,
+        });
     }
 
     forge_mod.linkSystemLibrary("glfw3", .{
         .preferred_link_mode = .Static,
     });
 
-    forge_mod.linkSystemLibrary("opengl32", .{
-        .preferred_link_mode = .Static,
-    });
 }
