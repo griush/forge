@@ -23,12 +23,16 @@ pub const WindowSpecification = struct {
     height: i32,
 };
 
+var g_window_count: u32 = 0;
+
 pub const Window = struct {
     handle: ?*c.GLFWwindow = undefined,
 
     pub fn init(spec: WindowSpecification) WindowInitError!Window {
-        if(c.glfwInit() == 0) {
-            return WindowInitError.GLFWInitError;
+        if (g_window_count == 0) {
+            if(c.glfwInit() == 0) {
+                return WindowInitError.GLFWInitError;
+            }
         }
 
         var win = Window{
@@ -40,6 +44,10 @@ pub const Window = struct {
             return WindowInitError.WindowCreateError;
         }
 
+        g_window_count += 1;
+
+        c.glfwMakeContextCurrent(win.handle);
+
         _ = c.glfwSetWindowCloseCallback(win.handle, windowCloseCallback);
 
         logger.info("Created window: '{s}'", .{spec.title});
@@ -48,11 +56,15 @@ pub const Window = struct {
 
     pub fn shutdown(self: Window) void {
         c.glfwDestroyWindow(self.handle);
-        c.glfwTerminate();
+        g_window_count -= 1;
+
+        if (g_window_count == 0) {
+            c.glfwTerminate();
+        }
     }
 
     pub fn update(self: Window) void {
-        _ = self;
+        c.glfwSwapBuffers(self.handle);
         c.glfwPollEvents();
     }
 };
