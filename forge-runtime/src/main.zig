@@ -19,7 +19,7 @@ pub fn main() anyerror!void {
     defer forge.logger.shutdown();
 
     // _ = app;
-    forge.engine.init(app);
+    try forge.engine.init(app);
     defer forge.engine.shutdown();
 
     forge.engine.run() catch |err| {
