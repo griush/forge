@@ -9,7 +9,7 @@ pub fn main() anyerror!void {
 
     const app = forge.application.Application {
         .name = "Forge Runtime",
-        .working_dir = "",
+        .working_dir = ".",
         .on_init = runtime.onInit,
         .on_update = runtime.onUpdate,
         .on_event = runtime.onEvent,

@@ -3,7 +3,8 @@ const logger = @import("logger.zig");
 const events = @import("events.zig");
 const window = @import("window.zig");
 // std
-const time = @import("std").time;
+const std = @import("std");
+const time = std.time;
 
 const c = @import("../c.zig");
 
@@ -48,11 +49,21 @@ pub fn init(client_app: app.Application) !void {
         .height = 1080,
     };
 
+    // TODO: Not tested but should work
+    std.os.chdir(client_app.working_dir) catch |err| {
+        logger.err("Error in working_dir: {s}", .{@errorName(err)});
+    };
+
     events.init();
 
     g_engine.main_window = try window.Window.init(win_spec);
     _ = events.registerEvent(events.EventType.WindowClose, onWindoCloseEvent);
+    _ = events.registerEvent(events.EventType.WindowResize, onEvent);
     _ = events.registerEvent(events.EventType.KeyPress, onEvent);
+    _ = events.registerEvent(events.EventType.MouseButtonPress, onEvent);
+    _ = events.registerEvent(events.EventType.MouseButtonRelease, onEvent);
+    _ = events.registerEvent(events.EventType.MouseMove, onEvent);
+    _ = events.registerEvent(events.EventType.MouseScroll, onEvent);
 
     g_engine.initialized = true;
 
@@ -91,4 +102,8 @@ pub fn run() RuntimeError!void {
 
 pub fn close() void {
     g_engine.is_running = false;
+}
+
+pub fn getMainWindow() window.Window {
+    return g_engine.main_window;
 }
