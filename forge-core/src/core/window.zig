@@ -136,14 +136,14 @@ pub const Window = struct {
             .handle = undefined,
         };
 
+        c.glfwWindowHint(c.GLFW_CLIENT_API, c.GLFW_NO_API);
+
         win.handle = c.glfwCreateWindow(@as(c_int, spec.width), @as(c_int, spec.height), @ptrCast(spec.title), null, null);
         if (win.handle == null) {
             return WindowInitError.WindowCreateError;
         }
 
         g_window_count += 1;
-
-        c.glfwMakeContextCurrent(win.handle);
 
         _ = c.glfwSetWindowCloseCallback(win.handle, windowCloseCallback);
         _ = c.glfwSetWindowSizeCallback(win.handle, windowSizeCallback);
@@ -166,11 +166,7 @@ pub const Window = struct {
     }
 
     pub fn update(self: Window) void {
-        // TODO: Temp GL Code
-        c.glClear(c.GL_COLOR_BUFFER_BIT);
-        c.glClearColor(1.0, 0.0, 1.0, 1.0);
-
-        c.glfwSwapBuffers(self.handle);
+        _ = self;
         c.glfwPollEvents();
     }
 };
