@@ -58,12 +58,7 @@ pub fn init(client_app: app.Application) !void {
 
     g_engine.main_window = try window.Window.init(win_spec);
     _ = events.registerEvent(events.EventType.WindowClose, onWindoCloseEvent);
-    _ = events.registerEvent(events.EventType.WindowResize, onEvent);
-    _ = events.registerEvent(events.EventType.KeyPress, onEvent);
-    _ = events.registerEvent(events.EventType.MouseButtonPress, onEvent);
-    _ = events.registerEvent(events.EventType.MouseButtonRelease, onEvent);
-    _ = events.registerEvent(events.EventType.MouseMove, onEvent);
-    _ = events.registerEvent(events.EventType.MouseScroll, onEvent);
+    _ = events.registerEvent(events.EventType.AllTypes, onEvent);
 
     g_engine.initialized = true;
 
@@ -84,6 +79,7 @@ pub fn run() RuntimeError!void {
     g_engine.is_running = true;
 
     g_engine.app_handle.on_init();
+    logger.debug("app.on_init() called.", .{});
 
     // This would only fail on wierd computers, any personal or "normal" computer will work.
     // Form std docs

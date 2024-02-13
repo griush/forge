@@ -9,7 +9,7 @@ pub const input         = @import("core/input.zig");
 // Math
 pub const math          = @import("math/math.zig");
 
-const forge_version_name: []const u8 = "0.0.2-alpha";
+const forge_version_name: []const u8 = "v0.0.2-alpha";
 
 /// Returns: (string) the current core version.
 pub fn getVersionName() []const u8 {

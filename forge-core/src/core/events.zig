@@ -17,6 +17,8 @@ pub const EventType = enum(u32) {
     MouseButtonPress, // mouse_code: u32
     MouseButtonRelease, // mouse_code: u32
     MouseScroll, // delta: [2]f32.x
+
+    AllTypes,
 };
 
 pub const EventPayload = union {
@@ -68,7 +70,7 @@ pub fn fireEvent(event_type: EventType, payload: EventPayload) bool {
     }
 
     for (g_client_registrations.items) |reg| {
-        if (reg.type != event_type) {
+        if (reg.type != event_type and reg.type != EventType.AllTypes) {
             continue;
         }
 

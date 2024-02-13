@@ -40,7 +40,6 @@ fn keyCallback(
     // logger.debug("{d}", .{key});
     //* On my keyboard, the key that opens the calculator throws a '-1' and crashes
     //* Below there is a temp fix.
-    // TODO: temp
     var key_code: i32 = key;
     if (key_code == -1) {
         key_code = 0;
