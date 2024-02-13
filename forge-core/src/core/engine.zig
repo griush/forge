@@ -2,14 +2,22 @@ const app = @import("application.zig");
 const logger = @import("logger.zig");
 const events = @import("events.zig");
 const window = @import("window.zig");
+
+const renderer = @import("../renderer/frontend.zig");
+
 // std
 const std = @import("std");
 const time = std.time;
 
 const c = @import("../c.zig");
 
-const RuntimeError = error {
+const InitError = error{
+    RendererInitializationFailed,
+};
+
+const RuntimeError = error{
     EngineNotInitialized,
+    RenderDrawFrameFailed,
 };
 
 const Engine = struct {
@@ -19,7 +27,7 @@ const Engine = struct {
     main_window: window.Window,
 };
 
-var g_engine = Engine {
+var g_engine = Engine{
     .app_handle = undefined,
     .is_running = false,
     .initialized = false,
@@ -60,6 +68,11 @@ pub fn init(client_app: app.Application) !void {
     _ = events.registerEvent(events.EventType.WindowClose, onWindoCloseEvent);
     _ = events.registerEvent(events.EventType.AllTypes, onEvent);
 
+    if (!renderer.init(client_app.name)) {
+        logger.fatal("Renderer failed to initialize. Aborting...", .{});
+        return InitError.RendererInitializationFailed;
+    }
+
     g_engine.initialized = true;
 
     logger.info("Initialized engine.", .{});
@@ -91,6 +104,17 @@ pub fn run() RuntimeError!void {
         dt_timer.reset();
 
         g_engine.app_handle.on_update(delta_time);
+
+        g_engine.app_handle.render(delta_time);
+
+        const packet = renderer.RenderPacket{
+            .delta_time = delta_time,
+        };
+
+        if (!renderer.drawFrame(packet)) {
+            logger.err("renderer.drawFrame failed.", .{});
+            return RuntimeError.RenderDrawFrameFailed;
+        }
 
         g_engine.main_window.update();
     }

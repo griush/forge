@@ -1,5 +1,6 @@
 const std = @import("std");
 const fs = std.fs;
+const builtin = std.builtin;
 
 // TODO: For all functions, better error handling (stop with catch unreachable)
 
@@ -14,7 +15,7 @@ const Logger = struct {
     file: fs.File,
 };
 
-var g_logger = Logger {
+var g_logger = Logger{
     .spec = undefined,
     .initialized = false,
     .file = undefined,
@@ -25,7 +26,10 @@ var g_logger = Logger {
 pub fn init(spec: LoggerSpecification) !void {
     g_logger.spec = spec;
 
-    g_logger.file = try fs.cwd().createFile("forge.log", .{},);
+    g_logger.file = try fs.cwd().createFile(
+        "forge.log",
+        .{},
+    );
     try g_logger.file.writeAll("");
 
     g_logger.initialized = true;
@@ -88,7 +92,7 @@ pub fn info(comptime fmt: []const u8, args: anytype) void {
     if (!g_logger.initialized) {
         return;
     }
-    
+
     const stdio = std.io.getStdOut().writer();
 
     if (g_logger.spec.to_std) {
@@ -101,6 +105,10 @@ pub fn info(comptime fmt: []const u8, args: anytype) void {
 }
 
 pub fn debug(comptime fmt: []const u8, args: anytype) void {
+    if (!std.debug.runtime_safety) {
+        return;
+    }
+
     if (!g_logger.initialized) {
         return;
     }
@@ -120,7 +128,7 @@ pub fn trace(comptime fmt: []const u8, args: anytype) void {
     if (!g_logger.initialized) {
         return;
     }
-    
+
     const stdio = std.io.getStdOut().writer();
 
     if (g_logger.spec.to_std) {

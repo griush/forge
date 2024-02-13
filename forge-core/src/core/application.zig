@@ -6,5 +6,6 @@ pub const Application = struct {
 
     on_init: *const fn () void,
     on_update: *const fn (f64) void,
+    render: *const fn (f64) void,
     on_event: *const fn (events.EventType, events.EventPayload) void,
 };
