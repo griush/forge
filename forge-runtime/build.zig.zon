@@ -1,6 +1,6 @@
 .{ 
     .name = "forge-runtime",
-    .version = "0.0.0-alpha",
+    .version = "0.0.1-dev",
     .dependencies = .{
         .forge = .{
             .path = "../forge-core"
