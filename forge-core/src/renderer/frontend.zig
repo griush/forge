@@ -1,21 +1,28 @@
 const backend = @import("backend.zig");
 const logger = @import("../core/logger.zig");
 
+const RendererInitError = error{
+    BackendInitFailed,
+};
+
+const RendererDrawFrameError = error{
+    BeginFrameFailed,
+    EndFrameFailed,
+};
+
 pub const RenderPacket = struct {
     delta_time: f64,
 };
 
 var g_backend: backend.RendererBackend = undefined;
 
-pub fn init(app_name: []const u8) bool {
+pub fn init(app_name: []const u8) RendererInitError!void {
     g_backend = backend.RendererBackend.init(backend.RendererAPI.Vulkan);
 
     if (!g_backend.init(&g_backend, app_name)) {
         logger.fatal("Renderer initialization failed.", .{});
-        return false;
+        return RendererInitError.BackendInitFailed;
     }
-
-    return true;
 }
 
 pub fn shutdown() void {
@@ -35,15 +42,15 @@ fn endFrame(delta_time: f64) bool {
     return g_backend.end_frame(&g_backend, delta_time);
 }
 
-pub fn drawFrame(packet: RenderPacket) bool {
+pub fn drawFrame(packet: RenderPacket) RendererDrawFrameError!void {
     if (beginFrame(packet.delta_time)) {
         const result = endFrame(packet.delta_time);
 
         if (!result) {
             logger.err("renderer.endFrame failed.", .{});
-            return false;
+            return RendererDrawFrameError.EndFrameFailed;
         }
+    } else {
+        return RendererDrawFrameError.BeginFrameFailed;
     }
-
-    return true;
 }

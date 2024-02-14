@@ -21,10 +21,14 @@ pub fn main() anyerror!void {
     defer forge.logger.shutdown();
 
     // _ = app;
-    try forge.engine.init(app);
+    forge.engine.init(app) catch |err| {
+        forge.logger.err("forge.engine init error: {s}", .{@errorName(err)});
+        return err;
+    };
     defer forge.engine.shutdown();
 
     forge.engine.run() catch |err| {
         forge.logger.err("forge.engine runtime error: {s}", .{@errorName(err)});
+        return err;
     };
 }

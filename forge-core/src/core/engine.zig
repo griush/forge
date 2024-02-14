@@ -68,10 +68,11 @@ pub fn init(client_app: app.Application) !void {
     _ = events.registerEvent(events.EventType.WindowClose, onWindoCloseEvent);
     _ = events.registerEvent(events.EventType.AllTypes, onEvent);
 
-    if (!renderer.init(client_app.name)) {
+    renderer.init(client_app.name) catch |err| {
         logger.fatal("Renderer failed to initialize. Aborting...", .{});
-        return InitError.RendererInitializationFailed;
-    }
+        logger.err("Error: {s}", .{@errorName(err)});
+        return err;
+    };
 
     g_engine.initialized = true;
 
@@ -111,10 +112,10 @@ pub fn run() RuntimeError!void {
             .delta_time = delta_time,
         };
 
-        if (!renderer.drawFrame(packet)) {
-            logger.err("renderer.drawFrame failed.", .{});
+        renderer.drawFrame(packet) catch |err| {
+            logger.err("RendererDrawFrame error: {s}", .{@errorName(err)});
             return RuntimeError.RenderDrawFrameFailed;
-        }
+        };
 
         g_engine.main_window.update();
     }
