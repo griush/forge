@@ -7,10 +7,10 @@ pub const RendererAPI = enum {
 pub const RendererBackend = struct {
     frame_number: u64,
 
-    init: *const fn (*RendererBackend, []const u8) bool = undefined,
+    init: *const fn (*RendererBackend, []const u8) vulkan.InitVulkanError!void = undefined,
     shutdown: *const fn (*RendererBackend) void = undefined,
 
-    resized: *const fn (*RendererBackend, i32, i32) void = undefined,
+    resize: *const fn (*RendererBackend, i32, i32) void = undefined,
 
     begin_frame: *const fn (*RendererBackend, f64) bool = undefined,
     end_frame: *const fn (*RendererBackend, f64) bool = undefined,
@@ -24,7 +24,7 @@ pub const RendererBackend = struct {
             .Vulkan => {
                 out_backend.init = vulkan.vulkanInit;
                 out_backend.shutdown = vulkan.vulkanShutdown;
-                out_backend.resized = vulkan.vulkanOnResized;
+                out_backend.resize = vulkan.vulkanOnResize;
                 out_backend.begin_frame = vulkan.vulkanBeginFrame;
                 out_backend.end_frame = vulkan.vulkanEndFrame;
             },

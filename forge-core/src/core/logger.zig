@@ -40,7 +40,7 @@ pub fn shutdown() void {
     g_logger.file.close();
 }
 
-pub fn fatal(comptime fmt: []const u8, args: anytype) void {
+pub fn fatal(comptime fmt: [:0]const u8, args: anytype) void {
     if (!g_logger.initialized) {
         return;
     }
@@ -56,7 +56,7 @@ pub fn fatal(comptime fmt: []const u8, args: anytype) void {
     }
 }
 
-pub fn err(comptime fmt: []const u8, args: anytype) void {
+pub fn err(comptime fmt: [:0]const u8, args: anytype) void {
     if (!g_logger.initialized) {
         return;
     }
@@ -72,7 +72,7 @@ pub fn err(comptime fmt: []const u8, args: anytype) void {
     }
 }
 
-pub fn warn(comptime fmt: []const u8, args: anytype) void {
+pub fn warn(comptime fmt: [:0]const u8, args: anytype) void {
     if (!g_logger.initialized) {
         return;
     }
@@ -88,7 +88,7 @@ pub fn warn(comptime fmt: []const u8, args: anytype) void {
     }
 }
 
-pub fn info(comptime fmt: []const u8, args: anytype) void {
+pub fn info(comptime fmt: [:0]const u8, args: anytype) void {
     if (!g_logger.initialized) {
         return;
     }
@@ -104,7 +104,7 @@ pub fn info(comptime fmt: []const u8, args: anytype) void {
     }
 }
 
-pub fn debug(comptime fmt: []const u8, args: anytype) void {
+pub fn debug(comptime fmt: [:0]const u8, args: anytype) void {
     if (!std.debug.runtime_safety) {
         return;
     }
@@ -124,7 +124,7 @@ pub fn debug(comptime fmt: []const u8, args: anytype) void {
     }
 }
 
-pub fn trace(comptime fmt: []const u8, args: anytype) void {
+pub fn trace(comptime fmt: [:0]const u8, args: anytype) void {
     if (!g_logger.initialized) {
         return;
     }

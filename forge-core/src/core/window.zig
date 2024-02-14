@@ -4,7 +4,7 @@ const event = @import("events.zig");
 const input = @import("input.zig");
 
 fn errorCallback(err: c_int, description: [*c]const u8) callconv(.C) void {
-    logger.err("GLFW errror ({d}): {s}", .{err, description});
+    logger.err("GLFW errror ({d}): {s}", .{ err, description });
 }
 
 fn windowCloseCallback(handle: ?*c.GLFWwindow) callconv(.C) void {
@@ -20,7 +20,7 @@ fn windowSizeCallback(handle: ?*c.GLFWwindow, w: c_int, h: c_int) callconv(.C) v
     _ = handle;
 
     const payload = event.EventPayload{
-        .size = [_]i32{w, h},
+        .size = [_]i32{ w, h },
     };
 
     _ = event.fireEvent(event.EventType.WindowResize, payload);
@@ -52,8 +52,7 @@ fn keyCallback(
     var event_type: event.EventType = undefined;
     if (action == c.GLFW_PRESS or action == c.GLFW_REPEAT) {
         event_type = event.EventType.KeyPress;
-    }
-    else if (action == c.GLFW_RELEASE) {
+    } else if (action == c.GLFW_RELEASE) {
         event_type = event.EventType.KeyRelease;
     }
     _ = event.fireEvent(event_type, payload);
@@ -80,8 +79,7 @@ fn mouseButtonCallback(
     var event_type: event.EventType = undefined;
     if (action == c.GLFW_PRESS or action == c.GLFW_REPEAT) {
         event_type = event.EventType.MouseButtonPress;
-    }
-    else if (action == c.GLFW_RELEASE) {
+    } else if (action == c.GLFW_RELEASE) {
         event_type = event.EventType.MouseButtonRelease;
     }
     _ = event.fireEvent(event_type, payload);
@@ -90,7 +88,7 @@ fn mouseButtonCallback(
 fn mousePosCallback(handle: ?*c.GLFWwindow, xpos: f64, ypos: f64) callconv(.C) void {
     _ = handle;
 
-    const payload = event.EventPayload {
+    const payload = event.EventPayload{
         .delta = [_]f64{ xpos, ypos },
     };
 
@@ -101,13 +99,13 @@ fn mouseScrollCallback(handle: ?*c.GLFWwindow, xo: f64, yo: f64) callconv(.C) vo
     _ = handle;
 
     const payload = event.EventPayload{
-        .delta = [_]f64 {xo, yo},
+        .delta = [_]f64{ xo, yo },
     };
 
     _ = event.fireEvent(event.EventType.MouseScroll, payload);
-} 
+}
 
-pub const WindowInitError = error {
+pub const WindowInitError = error{
     GLFWInitError,
     WindowCreateError,
 };
@@ -126,7 +124,7 @@ pub const Window = struct {
     pub fn init(spec: WindowSpecification) WindowInitError!Window {
         if (g_window_count == 0) {
             _ = c.glfwSetErrorCallback(errorCallback);
-            if(c.glfwInit() == 0) {
+            if (c.glfwInit() == 0) {
                 return WindowInitError.GLFWInitError;
             }
         }
@@ -167,5 +165,13 @@ pub const Window = struct {
     pub fn update(self: Window) void {
         _ = self;
         c.glfwPollEvents();
+    }
+
+    pub fn maximize(self: Window) void {
+        c.glfwMaximizeWindow(self.handle);
+    }
+
+    pub fn restore(self: Window) void {
+        c.glfwRestoreWindow(self.handle);
     }
 };

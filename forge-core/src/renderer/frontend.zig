@@ -19,19 +19,18 @@ var g_backend: backend.RendererBackend = undefined;
 pub fn init(app_name: []const u8) RendererInitError!void {
     g_backend = backend.RendererBackend.init(backend.RendererAPI.Vulkan);
 
-    if (!g_backend.init(&g_backend, app_name)) {
-        logger.fatal("Renderer initialization failed.", .{});
+    g_backend.init(&g_backend, app_name) catch |err| {
+        logger.fatal("Renderer backend initialization failed.\nError: {s}", .{@errorName(err)});
         return RendererInitError.BackendInitFailed;
-    }
+    };
 }
 
 pub fn shutdown() void {
     g_backend.shutdown(&g_backend);
 }
 
-pub fn onResized(width: i32, height: i32) void {
-    _ = width;
-    _ = height;
+pub fn onResize(width: i32, height: i32) void {
+    g_backend.resize(&g_backend, width, height);
 }
 
 fn beginFrame(delta_time: f64) bool {

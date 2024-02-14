@@ -1,6 +1,6 @@
 .{ 
     .name = "forge-core",
-    .version = "0.0.2-alpha",
+    .version = "0.0.1-dev",
 
     .dependencies = .{
         .glfw = .{

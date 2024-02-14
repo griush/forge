@@ -46,6 +46,16 @@ fn onWindoCloseEvent(t: events.EventType, payload: events.EventPayload) bool {
     g_engine.is_running = false;
     return true;
 }
+
+fn onWindowResizeEvent(t: events.EventType, payload: events.EventPayload) bool {
+    _ = t;
+    const width: i32 = payload.size[0];
+    const height: i32 = payload.size[1];
+
+    renderer.onResize(width, height);
+
+    return false;
+}
 //* End section
 
 pub fn init(client_app: app.Application) !void {
@@ -66,6 +76,7 @@ pub fn init(client_app: app.Application) !void {
 
     g_engine.main_window = try window.Window.init(win_spec);
     _ = events.registerEvent(events.EventType.WindowClose, onWindoCloseEvent);
+    _ = events.registerEvent(events.EventType.WindowResize, onWindowResizeEvent);
     _ = events.registerEvent(events.EventType.AllTypes, onEvent);
 
     renderer.init(client_app.name) catch |err| {

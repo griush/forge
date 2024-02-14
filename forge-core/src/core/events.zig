@@ -6,7 +6,7 @@ const std = @import("std");
 pub const EventType = enum(u32) {
     // Window events
     WindowClose, // No payload
-    WindowResize, // size: [2]u32
+    WindowResize, // size: [2]i32
 
     // Key
     KeyPress, // keycode: u32
@@ -28,7 +28,7 @@ pub const EventPayload = union {
     mouse_code: input.MouseCode,
 };
 
-pub const EventCallbackFn = *const fn(EventType, EventPayload) bool;
+pub const EventCallbackFn = *const fn (EventType, EventPayload) bool;
 
 const ClientRegistrations = struct {
     type: EventType,
